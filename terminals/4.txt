@@ -1,0 +1,23 @@
+---
+pid: 55116
+cwd: "C:\Users\user\ai-stock-multi-agent"
+command: "cmd /c \"C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python311\\python.exe -m streamlit run C:\\Users\\user\\ai-stock-multi-agent\\main.py --server.headless true\""
+started_at: 2026-06-24T08:49:27.559Z
+running_for_ms: 6764995  
+---
+2026-06-24 16:49:28.326 Uvicorn server started on 0.0.0.0:8501
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.0.11:8501
+  External URL: http://58.176.147.172:8501
+
+Exception in callback _ProactorBasePipeTransport._call_connection_lost(None)
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost(None)>
+Traceback (most recent call last):
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\asyncio\events.py", line 84, in _run
+    self._context.run(self._callback, *self._args)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python311\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+ConnectionResetError: [WinError 10054] 遠端主機已強制關閉一個現存的連線。

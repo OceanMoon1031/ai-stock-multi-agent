@@ -1,0 +1,59 @@
+---
+pid: 61712
+cwd: "C:\Users\user\ai-stock-multi-agent"
+command: "cmd /c \"C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python311\\python.exe -m streamlit run C:\\Users\\user\\ai-stock-multi-agent\\main.py --server.headless true\""
+started_at: 2026-06-24T08:14:32.326Z
+running_for_ms: 8860001  
+---
+2026-06-24 16:14:33.355 Uvicorn server started on 0.0.0.0:8501
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.0.11:8501
+  External URL: http://58.176.147.172:8501
+
+2026-06-24 16:36:33.692 127.0.0.1:64198 - "GET / HTTP/1.1" 200
+2026-06-24 16:36:33.724 127.0.0.1:64198 - "GET /static/js/index.dkY5s53S.js HTTP/1.1" 200
+2026-06-24 16:36:33.740 127.0.0.1:64198 - "GET /static/css/index.M0-f_CLq.css HTTP/1.1" 200
+2026-06-24 16:36:33.847 127.0.0.1:64198 - "GET /_stcore/health HTTP/1.1" 200
+2026-06-24 16:36:33.850 127.0.0.1:64198 - "GET /_stcore/host-config HTTP/1.1" 200
+2026-06-24 16:36:33.873 127.0.0.1:64198 - "GET /favicon.png HTTP/1.1" 200
+2026-06-24 16:36:34.176 127.0.0.1:62901 - "WebSocket /_stcore/stream" [accepted]
+2026-06-24 16:36:34.176 connection open
+2026-06-24 16:36:39.671 127.0.0.1:54359 - "GET /static/media/snowflake.JU2jBHL8.svg HTTP/1.1" 200
+2026-06-24 16:38:17.370 127.0.0.1:55256 - "GET / HTTP/1.1" 304
+2026-06-24 16:38:17.473 127.0.0.1:55256 - "GET /_stcore/health HTTP/1.1" 200
+2026-06-24 16:38:17.474 127.0.0.1:55256 - "GET /_stcore/host-config HTTP/1.1" 200
+2026-06-24 16:38:17.807 127.0.0.1:51824 - "WebSocket /_stcore/stream" [accepted]
+2026-06-24 16:38:17.807 connection open
+2026-06-24 16:38:18.794 127.0.0.1:55256 - "GET / HTTP/1.1" 304
+2026-06-24 16:38:18.890 127.0.0.1:55256 - "GET /_stcore/health HTTP/1.1" 200
+2026-06-24 16:38:18.890 127.0.0.1:58863 - "GET /_stcore/host-config HTTP/1.1" 200
+2026-06-24 16:38:19.213 127.0.0.1:65083 - "WebSocket /_stcore/stream" [accepted]
+2026-06-24 16:38:19.213 connection open
+2026-06-24 16:39:54.852 127.0.0.1:49280 - "GET / HTTP/1.1" 304
+2026-06-24 16:39:54.955 127.0.0.1:49280 - "GET /_stcore/health HTTP/1.1" 200
+2026-06-24 16:39:54.958 127.0.0.1:49280 - "GET /_stcore/host-config HTTP/1.1" 200
+2026-06-24 16:39:55.270 127.0.0.1:55543 - "WebSocket /_stcore/stream" [accepted]
+2026-06-24 16:39:55.270 connection open
+2026-06-24 16:40:01.130 127.0.0.1:53128 - "GET / HTTP/1.1" 304
+2026-06-24 16:40:01.224 127.0.0.1:53128 - "GET /_stcore/health HTTP/1.1" 200
+2026-06-24 16:40:01.224 127.0.0.1:56697 - "GET /_stcore/host-config HTTP/1.1" 200
+2026-06-24 16:40:01.543 127.0.0.1:50615 - "WebSocket /_stcore/stream" [accepted]
+2026-06-24 16:40:01.543 connection open
+2026-06-24 16:46:47.721 127.0.0.1:51223 - "GET / HTTP/1.1" 304
+2026-06-24 16:46:47.870 127.0.0.1:51223 - "GET /_stcore/health HTTP/1.1" 200
+2026-06-24 16:46:47.872 127.0.0.1:51223 - "GET /_stcore/host-config HTTP/1.1" 200
+2026-06-24 16:46:48.195 127.0.0.1:55035 - "WebSocket /_stcore/stream" [accepted]
+2026-06-24 16:46:48.197 connection open
+2026-06-24 16:46:49.057 127.0.0.1:51223 - "GET / HTTP/1.1" 304
+2026-06-24 16:46:49.150 127.0.0.1:51223 - "GET /_stcore/health HTTP/1.1" 200
+2026-06-24 16:46:49.150 127.0.0.1:50390 - "GET /_stcore/host-config HTTP/1.1" 200
+2026-06-24 16:46:49.459 127.0.0.1:53768 - "WebSocket /_stcore/stream" [accepted]
+2026-06-24 16:46:49.459 connection open
+2026-06-24 16:46:56.494 127.0.0.1:53309 - "GET / HTTP/1.1" 304
+2026-06-24 16:46:56.558 127.0.0.1:53309 - "GET /_stcore/health HTTP/1.1" 200
+2026-06-24 16:46:56.559 127.0.0.1:53309 - "GET /_stcore/host-config HTTP/1.1" 200
+2026-06-24 16:46:56.884 127.0.0.1:56069 - "WebSocket /_stcore/stream" [accepted]
+2026-06-24 16:46:56.884 connection open

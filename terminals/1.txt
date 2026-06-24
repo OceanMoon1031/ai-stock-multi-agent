@@ -1,0 +1,18 @@
+---
+pid: 57808
+cwd: "C:\Users\user\ai-stock-multi-agent"
+command: "& \"C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python311\\python.exe\" -m streamlit run \"C:\\Users\\user\\ai-stock-multi-agent\\main.py\""
+started_at: 2026-06-24T08:13:34.661Z
+running_for_ms: 8920004  
+---
+��� �u��:1 �r��:44
++ (cd "C:\\Users\\user\\ai-stock-multi-agent" ; & "C:\Users\user\AppDat ...
++                                            ~
+�B�⦡���� ')'�C
+��� �u��:1 �r��:177
++ ... n.exe" -m streamlit run "C:\Users\user\ai-stock-multi-agent\main.py")
++                                                                         ~
+�B�⦡�γ��z���������w���� ')' �y�J�򤸡C
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingEndParenthesisInExpression
+ 
