@@ -9,14 +9,14 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# 安裝 Python 套件
+# 複製 requirements.txt 並安裝
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 複製整個項目
 COPY . .
 
-# 暴露 Streamlit 預設端口
+# 暴露 Hugging Face 預設端口
 EXPOSE 7860
 
 # 啟動指令（使用我們根目錄的 app.py）
