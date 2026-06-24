@@ -275,3 +275,80 @@ class TechnicalAnalysisReport(BaseModel):
     position_size: str
 
     report_markdown: str
+
+
+UnifiedRating = Literal["Strong Buy", "Buy", "Neutral", "Avoid"]
+
+
+class RatingMapping(BaseModel):
+    """Mapped ratings from each step into the unified scale."""
+
+    step1_raw: str = Field(description="Step 1 recommendation as reported.")
+    step2_raw: str = Field(description="Step 2 overall_rating as reported.")
+    step3_raw: str = Field(description="Step 3 technical_rating as reported.")
+    step1_mapped: UnifiedRating
+    step2_mapped: UnifiedRating
+    step3_mapped: UnifiedRating
+    mapping_notes: str = Field(
+        default="",
+        description="Brief explanation of how ratings were normalized.",
+    )
+
+
+class ConsistencyCheckItem(BaseModel):
+    """Single consistency check across the three upstream reports."""
+
+    aspect: str = Field(
+        description="Dimension checked, e.g. 整體評級, 入場價, 止蝕, 倉位建議, 風險.",
+    )
+    step1_view: str = Field(description="Step 1 position on this aspect.")
+    step2_view: str = Field(description="Step 2 position on this aspect.")
+    step3_view: str = Field(description="Step 3 position on this aspect.")
+    is_consistent: bool
+    explanation: str = Field(
+        description="Why they align or diverge, and which view to weight.",
+    )
+
+
+class FinalDecisionReport(BaseModel):
+    """Structured final integrated decision report (Step 4)."""
+
+    ticker: str
+    company_name: str
+    analysis_date: str
+    data_updated_at: str
+    user_profile: DeepCheckUserProfile = Field(default_factory=DeepCheckUserProfile)
+    generated_at: str = Field(
+        default_factory=lambda: datetime.now(timezone.utc).isoformat(),
+    )
+
+    rating_mapping: RatingMapping
+    consistency_checks: list[ConsistencyCheckItem] = Field(
+        default_factory=list,
+        description="Cross-report consistency analysis.",
+    )
+    personal_fit_reassessment: str = Field(
+        description="Re-evaluation of suitability given user profile.",
+    )
+
+    final_recommendation: UnifiedRating
+    conviction_level: Literal["High", "Medium", "Low"]
+    conviction_rationale: str = Field(
+        description="Why this conviction level was chosen.",
+    )
+
+    position_size: str = Field(description="Suggested portfolio allocation percentage.")
+    entry_price_range: str
+    stop_loss: str
+    take_profit_1: str = ""
+    take_profit_2: str = ""
+    entry_plan: str = Field(description="Phased entry / scaling-in plan.")
+
+    key_risks: list[str] = Field(default_factory=list)
+    deal_breakers: list[str] = Field(
+        default_factory=list,
+        description="Conditions that would invalidate the thesis.",
+    )
+
+    report_markdown: str
+    html_report: str = ""

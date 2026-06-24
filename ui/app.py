@@ -2,16 +2,40 @@
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
+# 把項目根目錄加入 Python 路徑（解決 ModuleNotFoundError）
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
 import streamlit as st
 import streamlit.components.v1 as components
 
-from agents import DeepCheckAgent, FundamentalReportAgent, TechnicalAnalysisAgent
-from agents.models import DeepCheckReport, FundamentalReport, TechnicalAnalysisReport
+from agents import (
+    DeepCheckAgent,
+    FinalDecisionAgent,
+    FundamentalReportAgent,
+    TechnicalAnalysisAgent,
+)
+from agents.models import (
+    DeepCheckReport,
+    FinalDecisionReport,
+    FundamentalReport,
+    TechnicalAnalysisReport,
+)
 from utils.config import ConfigurationError
 
 DARK_BG = "#0f172a"
 CARD_BG = "#1e2937"
 TEXT_MUTED = "#94a3b8"
+MISSING_PREREQUISITE_MSG = (
+    "請先執行「生成完整分析」或分別執行 Step 1、2、3 後，再按此按鈕。"
+)
+
+TAB_STEP1 = "Step 1: 基本面分析"
+TAB_STEP2 = "Step 2: 深度買前檢查"
+TAB_STEP3 = "Step 3: 技術面分析"
+TAB_STEP4 = "Step 4: 最終投資決策"
 
 
 def _inject_styles() -> None:
@@ -66,6 +90,16 @@ def _inject_styles() -> None:
                 color: white;
                 background: linear-gradient(135deg, #38bdf8, #3b82f6);
             }}
+            .st-key-run_final_decision_btn button {{
+                background: linear-gradient(135deg, #7c3aed, #5b21b6) !important;
+                color: white !important;
+                border: none !important;
+            }}
+            .st-key-run_final_decision_btn button:hover {{
+                background: linear-gradient(135deg, #8b5cf6, #6d28d9) !important;
+                color: white !important;
+                border: none !important;
+            }}
             .report-meta {{
                 display: flex;
                 gap: 1rem;
@@ -88,7 +122,7 @@ def _inject_styles() -> None:
 def _render_header() -> None:
     st.markdown('<p class="main-header">AI Stock Multi-Agent Analysis</p>', unsafe_allow_html=True)
     st.markdown(
-        '<p class="sub-header">輸入股票代碼，生成基本面、深度買前檢查或技術面分析（Step 1 + Step 2 + Step 3）</p>',
+        '<p class="sub-header">輸入股票代碼，生成基本面、深度買前檢查、技術面或最終投資決策（Step 1 → 2 → 3 → 4）</p>',
         unsafe_allow_html=True,
     )
 
@@ -96,7 +130,7 @@ def _render_header() -> None:
 def _render_profile_sidebar() -> dict[str, str]:
     with st.sidebar:
         st.markdown("### 個人資料")
-        st.caption("以下資料會用於深度買前檢查的個人匹配分析（Step 2）。")
+        st.caption("以下資料會用於深度買前檢查的個人匹配分析（Step 2）及最終投資決策（Step 4）。")
 
         available_capital = st.text_input(
             "可用資金",
@@ -135,7 +169,7 @@ def _render_input_panel() -> str:
             """
             <div class="info-card">
                 <h3>分析設定</h3>
-                <p>輸入美股代碼（如 AAPL、NVDA、GOOGL），可單獨生成各類報告，或一次執行 Step 1 → Step 2 → Step 3 完整分析。</p>
+                <p>輸入美股代碼（如 AAPL、NVDA、GOOGL），可單獨生成各類報告，或一次執行 Step 1 → 2 → 3 → 4 完整分析。</p>
             </div>
             """,
             unsafe_allow_html=True,
@@ -178,6 +212,23 @@ def _render_deep_check_summary(report: DeepCheckReport) -> None:
             <span class="report-badge">數據：{report.data_updated_at}</span>
         </div>
         <p style="color:{TEXT_MUTED};font-size:0.9rem;">主要理由：{reasons}</p>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def _render_final_decision_summary(report: FinalDecisionReport) -> None:
+    st.markdown(
+        f"""
+        <div class="report-meta">
+            <span class="report-badge">🎯 {report.ticker} · {report.company_name}</span>
+            <span class="report-badge">最終建議：{report.final_recommendation}</span>
+            <span class="report-badge">信心：{report.conviction_level}</span>
+            <span class="report-badge">倉位：{report.position_size}</span>
+            <span class="report-badge">入場：{report.entry_price_range}</span>
+            <span class="report-badge">止蝕：{report.stop_loss}</span>
+            <span class="report-badge">數據：{report.data_updated_at}</span>
+        </div>
         """,
         unsafe_allow_html=True,
     )
@@ -243,8 +294,8 @@ def _render_report_content(
         )
 
 
-def _run_fundamental(ticker: str) -> FundamentalReport | None:
-    with st.spinner(f"Step 1：正在生成 {ticker} 基本面報告…（約 20–40 秒）"):
+def _run_fundamental(ticker: str, *, show_spinner: bool = True) -> FundamentalReport | None:
+    def _execute() -> FundamentalReport | None:
         try:
             return FundamentalReportAgent().run(ticker)
         except ConfigurationError as exc:
@@ -255,38 +306,52 @@ def _run_fundamental(ticker: str) -> FundamentalReport | None:
             st.error(f"基本面分析失敗：{exc}")
         except Exception as exc:
             st.error(f"發生未預期錯誤：{exc}")
-    return None
+        return None
+
+    if show_spinner:
+        with st.spinner(f"Step 1：正在生成 {ticker} 基本面報告…（約 20–40 秒）"):
+            return _execute()
+    return _execute()
 
 
-def _run_deep_check(ticker: str, profile: dict[str, str]) -> DeepCheckReport | None:
-    status = st.empty()
-    status.info(f"Step 2：正在進行 {ticker} 深度買前檢查（交叉驗證 8 大維度）…")
-
-    with st.spinner(f"深度檢查進行中…（約 25–45 秒，請勿關閉頁面）"):
+def _run_deep_check(
+    ticker: str,
+    profile: dict[str, str],
+    *,
+    show_spinner: bool = True,
+) -> DeepCheckReport | None:
+    def _execute() -> DeepCheckReport | None:
         try:
-            report = DeepCheckAgent().run(
+            return DeepCheckAgent().run(
                 ticker,
                 available_capital=profile.get("available_capital", ""),
                 risk_tolerance=profile.get("risk_tolerance", ""),
                 investment_horizon=profile.get("investment_horizon", ""),
                 portfolio_concentration=profile.get("portfolio_concentration", ""),
             )
-            status.success(f"{ticker} 深度買前檢查完成。")
-            return report
         except ConfigurationError as exc:
-            status.error(f"API 設定錯誤：{exc}")
+            st.error(f"API 設定錯誤：{exc}")
         except ValueError as exc:
-            status.error(f"輸入錯誤：{exc}")
+            st.error(f"輸入錯誤：{exc}")
         except RuntimeError as exc:
-            status.error(f"深度檢查失敗：{exc}")
+            st.error(f"深度檢查失敗：{exc}")
         except Exception as exc:
-            status.error(f"發生未預期錯誤：{exc}")
+            st.error(f"發生未預期錯誤：{exc}")
+        return None
 
-    return None
+    if show_spinner:
+        status = st.empty()
+        status.info(f"Step 2：正在進行 {ticker} 深度買前檢查（交叉驗證 8 大維度）…")
+        with st.spinner(f"深度檢查進行中…（約 25–45 秒，請勿關閉頁面）"):
+            report = _execute()
+        if report is not None:
+            status.success(f"{ticker} 深度買前檢查完成。")
+        return report
+    return _execute()
 
 
-def _run_technical(ticker: str) -> TechnicalAnalysisReport | None:
-    with st.spinner(f"Step 3：正在進行 {ticker} 技術面分析…（約 20–35 秒）"):
+def _run_technical(ticker: str, *, show_spinner: bool = True) -> TechnicalAnalysisReport | None:
+    def _execute() -> TechnicalAnalysisReport | None:
         try:
             return TechnicalAnalysisAgent().run(ticker)
         except ConfigurationError as exc:
@@ -297,7 +362,123 @@ def _run_technical(ticker: str) -> TechnicalAnalysisReport | None:
             st.error(f"技術面分析失敗：{exc}")
         except Exception as exc:
             st.error(f"發生未預期錯誤：{exc}")
-    return None
+        return None
+
+    if show_spinner:
+        with st.spinner(f"Step 3：正在進行 {ticker} 技術面分析…（約 20–35 秒）"):
+            return _execute()
+    return _execute()
+
+
+def _get_prerequisite_reports() -> tuple[FundamentalReport | None, DeepCheckReport | None, TechnicalAnalysisReport | None]:
+    return (
+        st.session_state.get("last_fundamental_report"),
+        st.session_state.get("last_deep_check_report"),
+        st.session_state.get("last_technical_report"),
+    )
+
+
+def _validate_prerequisite_reports(
+    ticker: str,
+    fundamental: FundamentalReport | None,
+    deep_check: DeepCheckReport | None,
+    technical: TechnicalAnalysisReport | None,
+) -> bool:
+    if fundamental is None or deep_check is None or technical is None:
+        st.warning(MISSING_PREREQUISITE_MSG)
+        return False
+
+    report_tickers = {fundamental.ticker, deep_check.ticker, technical.ticker}
+    if len(report_tickers) != 1 or ticker not in report_tickers:
+        st.warning(
+            f"現有報告股票代碼（{', '.join(sorted(report_tickers))}）"
+            f"與目前輸入（{ticker}）不一致，請重新生成 Step 1–3 報告。"
+        )
+        return False
+
+    return True
+
+
+def _run_final_decision(
+    fundamental: FundamentalReport,
+    deep_check: DeepCheckReport,
+    technical: TechnicalAnalysisReport,
+    profile: dict[str, str],
+    *,
+    show_spinner: bool = True,
+) -> FinalDecisionReport | None:
+    def _execute() -> FinalDecisionReport | None:
+        try:
+            return FinalDecisionAgent().run(
+                fundamental,
+                deep_check,
+                technical,
+                user_profile=profile,
+            )
+        except ConfigurationError as exc:
+            st.error(f"API 設定錯誤：{exc}")
+        except ValueError as exc:
+            st.error(f"輸入錯誤：{exc}")
+        except RuntimeError as exc:
+            st.error(f"最終決策分析失敗：{exc}")
+        except Exception as exc:
+            st.error(f"發生未預期錯誤：{exc}")
+        return None
+
+    if show_spinner:
+        with st.spinner("Step 4: 正在進行最終投資決策..."):
+            return _execute()
+    return _execute()
+
+
+def _run_full_analysis(ticker: str, profile: dict[str, str]) -> None:
+    """Execute Step 1 → 2 → 3 → 4 with a four-stage progress bar."""
+    st.session_state.pop("last_final_decision_report", None)
+
+    progress = st.progress(0, text="Step 1: 正在進行基本面分析...")
+    fundamental = _run_fundamental(ticker, show_spinner=False)
+    if fundamental is None:
+        st.error("Step 1 基本面分析失敗，完整分析已中止。")
+        progress.empty()
+        return
+    st.session_state["last_fundamental_report"] = fundamental
+
+    progress.progress(25, text="Step 2: 正在進行深度買前檢查...")
+    deep_check = _run_deep_check(ticker, profile, show_spinner=False)
+    if deep_check is None:
+        st.error("Step 2 深度買前檢查失敗，完整分析已中止。")
+        progress.empty()
+        return
+    st.session_state["last_deep_check_report"] = deep_check
+
+    progress.progress(50, text="Step 3: 正在進行技術面分析...")
+    technical = _run_technical(ticker, show_spinner=False)
+    if technical is None:
+        st.error("Step 3 技術面分析失敗，完整分析已中止。")
+        progress.empty()
+        return
+    st.session_state["last_technical_report"] = technical
+
+    progress.progress(75, text="Step 4: 正在進行最終投資決策...")
+    final_report = _run_final_decision(
+        fundamental,
+        deep_check,
+        technical,
+        profile,
+        show_spinner=False,
+    )
+    if final_report is None:
+        st.error("Step 4 最終投資決策失敗，請稍後重試或使用「重新生成最終投資決策」。")
+        progress.empty()
+        return
+    st.session_state["last_final_decision_report"] = final_report
+
+    progress.progress(100, text="完整分析完成（Step 1 + 2 + 3 + 4）。")
+    st.success(
+        f"{ticker} 完整分析完成：最終建議 {final_report.final_recommendation}"
+        f"（信心 {final_report.conviction_level}）。請查看「{TAB_STEP4}」tab。"
+    )
+    progress.empty()
 
 
 def _validate_ticker(ticker: str) -> bool:
@@ -330,7 +511,22 @@ def run_app() -> None:
     with col4:
         run_full_btn = st.button("生成完整分析", type="primary", use_container_width=True)
 
-    any_run = run_fundamental_btn or run_deep_check_btn or run_technical_btn or run_full_btn
+    _, final_col, _ = st.columns([1, 2, 1])
+    with final_col:
+        run_final_btn = st.button(
+            "重新生成最終投資決策",
+            use_container_width=True,
+            key="run_final_decision_btn",
+        )
+        st.caption("可在執行完整分析後，調整個人資料再重新生成 Step 4 的最終建議。")
+
+    any_run = (
+        run_fundamental_btn
+        or run_deep_check_btn
+        or run_technical_btn
+        or run_final_btn
+        or run_full_btn
+    )
     if any_run:
         if not _validate_ticker(ticker):
             st.stop()
@@ -352,40 +548,39 @@ def run_app() -> None:
         if report is not None:
             st.session_state["last_technical_report"] = report
 
+    if run_final_btn:
+        fundamental_report, deep_check_report, technical_report = _get_prerequisite_reports()
+        if _validate_prerequisite_reports(ticker, fundamental_report, deep_check_report, technical_report):
+            final_report = _run_final_decision(
+                fundamental_report,  # type: ignore[arg-type]
+                deep_check_report,  # type: ignore[arg-type]
+                technical_report,  # type: ignore[arg-type]
+                profile,
+            )
+            if final_report is not None:
+                st.session_state["last_final_decision_report"] = final_report
+
     if run_full_btn:
-        progress = st.progress(0, text="準備開始完整分析（Step 1 → 2 → 3）…")
-
-        fundamental = _run_fundamental(ticker)
-        if fundamental is not None:
-            st.session_state["last_fundamental_report"] = fundamental
-        progress.progress(33, text="Step 1 完成：基本面報告已生成，開始 Step 2…")
-
-        deep_check = _run_deep_check(ticker, profile)
-        if deep_check is not None:
-            st.session_state["last_deep_check_report"] = deep_check
-        progress.progress(66, text="Step 2 完成：深度買前檢查已生成，開始 Step 3…")
-
-        technical = _run_technical(ticker)
-        if technical is not None:
-            st.session_state["last_technical_report"] = technical
-        progress.progress(100, text="完整分析完成（Step 1 + 2 + 3）。")
-        progress.empty()
+        _run_full_analysis(ticker, profile)
 
     fundamental_report = st.session_state.get("last_fundamental_report")
     deep_check_report = st.session_state.get("last_deep_check_report")
     technical_report = st.session_state.get("last_technical_report")
+    final_decision_report = st.session_state.get("last_final_decision_report")
 
-    if not fundamental_report and not deep_check_report and not technical_report:
+    if not fundamental_report and not deep_check_report and not technical_report and not final_decision_report:
         return
 
     st.markdown("---")
     tab_labels: list[str] = []
     if fundamental_report:
-        tab_labels.append("📊 基本面報告")
+        tab_labels.append(TAB_STEP1)
     if deep_check_report:
-        tab_labels.append("🔍 深度買前檢查")
+        tab_labels.append(TAB_STEP2)
     if technical_report:
-        tab_labels.append("📉 技術面分析")
+        tab_labels.append(TAB_STEP3)
+    if final_decision_report:
+        tab_labels.append(TAB_STEP4)
 
     tabs = st.tabs(tab_labels)
     tab_index = 0
@@ -424,6 +619,19 @@ def run_app() -> None:
                 ticker=technical_report.ticker,
                 report_prefix="technical_report",
                 view_key="technical_view_mode",
+                markdown_only=True,
+            )
+        tab_index += 1
+
+    if final_decision_report:
+        with tabs[tab_index]:
+            _render_final_decision_summary(final_decision_report)
+            _render_report_content(
+                markdown=final_decision_report.report_markdown,
+                html="",
+                ticker=final_decision_report.ticker,
+                report_prefix="final_decision_report",
+                view_key="final_decision_view_mode",
                 markdown_only=True,
             )
 
