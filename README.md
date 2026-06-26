@@ -8,7 +8,7 @@ A multi-agent stock analysis system that performs comprehensive fundamental, pre
 
 ## Project Overview
 
-This project implements a **4-step multi-agent workflow** designed to simulate how a professional investment team would evaluate a stock. 
+This project implements a **4-step multi-agent workflow** designed to simulate how a professional investment team would evaluate a stock.
 
 Given a stock ticker and the user’s personal investment profile (capital, risk tolerance, investment horizon), the system generates structured, actionable investment recommendations.
 
@@ -18,6 +18,8 @@ Given a stock ticker and the user’s personal investment profile (capital, risk
 - Real-time market data integration via yfinance
 - Personal risk profile matching in the final recommendation
 - Fully deployed public demo on Streamlit Community Cloud
+
+![Main UI](images/main-ui.png)
 
 ---
 
@@ -29,6 +31,20 @@ Given a stock ticker and the user’s personal investment profile (capital, risk
 | **Step 2** | Pre-Purchase Deep Check | 8-dimension skeptical analysis (management, moat, macro, sentiment, valuation, black swans, personal fit, etc.) |
 | **Step 3** | Technical Analysis | RSI, MACD, moving averages, support/resistance, chart patterns, entry strategy |
 | **Step 4** | Final Investment Decision | Cross-report consistency check + personal profile matching → final rating + position sizing + entry/exit plan |
+
+![Fundamental Analysis Example](images/step1_result1.png)
+
+![Deep Check Analysis Example](images/step2_result1.png)
+
+---
+
+## Live Demo
+
+Try it here: [https://ai-stock-multi-agent-75d5nqefengwnuqvy94hpd.streamlit.app](https://ai-stock-multi-agent-75d5nqefengwnuqvy94hpd.streamlit.app)
+
+Recommended test tickers: `NVDA`, `AAPL`, `GOOGL`, `AMD`, `TSM`
+
+![Final Investment Decision Example](images/final_result1.png)
 
 ---
 
@@ -44,6 +60,7 @@ Given a stock ticker and the user’s personal investment profile (capital, risk
 ---
 
 ## Project Structure
+
 ai-stock-multi-agent/
 ├── app.py                      # Entry point for Streamlit Cloud
 ├── ui/app.py                   # Main UI + workflow controller
@@ -62,16 +79,9 @@ ai-stock-multi-agent/
 
 ---
 
-## Live Demo
-
-Try it here: [https://ai-stock-multi-agent-75d5nqefengwnuqvy94hpd.streamlit.app](https://ai-stock-multi-agent-75d5nqefengwnuqvy94hpd.streamlit.app)
-
-Recommended test tickers: `NVDA`, `AAPL`, `GOOGL`, `AMD`, `TSM`
-
----
-
 ## Getting Started (Local)
 
+```bash
 git clone https://github.com/OceanMoon1031/ai-stock-multi-agent.git
 cd ai-stock-multi-agent
 
@@ -81,13 +91,11 @@ pip install -r requirements.txt
 echo "XAI_API_KEY=sk-your-key-here" > .env
 
 streamlit run ui/app.py
-
 Author
-Chan Hoi Yuet (Moon)
+Chan Hoi-Yuet (Moon)
 BSc Computer Science, Hong Kong Metropolitan University
 
 Interested in AI Engineering, LLM Applications, and Full-stack Development
 Building practical AI agent systems and LLM-powered tools
-
 License
 This project is for portfolio and educational demonstration purposes.
