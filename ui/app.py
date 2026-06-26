@@ -127,6 +127,27 @@ def _render_header() -> None:
     )
 
 
+def _render_footer() -> None:
+    st.markdown("---")
+    st.markdown(
+        """
+        <div style="
+            text-align: center;
+            color: #64748b;
+            font-size: 0.82rem;
+            opacity: 0.75;
+            padding-top: 8px;
+            padding-bottom: 12px;
+        ">
+            © 2026 Chan Hoi-Yuet (Moon) &nbsp;|&nbsp;
+            AI Stock Multi-Agent Analysis &nbsp;|&nbsp;
+            Built with Streamlit + Grok (xAI)
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def _render_profile_sidebar() -> dict[str, str]:
     with st.sidebar:
         st.markdown("### 個人資料")
@@ -527,28 +548,27 @@ def run_app() -> None:
         or run_final_btn
         or run_full_btn
     )
-    if any_run:
-        if not _validate_ticker(ticker):
-            st.stop()
+    ticker_valid = not any_run or _validate_ticker(ticker)
+    if any_run and ticker_valid:
         st.session_state["last_profile"] = profile
         st.session_state["last_ticker"] = ticker
 
-    if run_fundamental_btn:
+    if run_fundamental_btn and ticker_valid:
         report = _run_fundamental(ticker)
         if report is not None:
             st.session_state["last_fundamental_report"] = report
 
-    if run_deep_check_btn:
+    if run_deep_check_btn and ticker_valid:
         report = _run_deep_check(ticker, profile)
         if report is not None:
             st.session_state["last_deep_check_report"] = report
 
-    if run_technical_btn:
+    if run_technical_btn and ticker_valid:
         report = _run_technical(ticker)
         if report is not None:
             st.session_state["last_technical_report"] = report
 
-    if run_final_btn:
+    if run_final_btn and ticker_valid:
         fundamental_report, deep_check_report, technical_report = _get_prerequisite_reports()
         if _validate_prerequisite_reports(ticker, fundamental_report, deep_check_report, technical_report):
             final_report = _run_final_decision(
@@ -560,7 +580,7 @@ def run_app() -> None:
             if final_report is not None:
                 st.session_state["last_final_decision_report"] = final_report
 
-    if run_full_btn:
+    if run_full_btn and ticker_valid:
         _run_full_analysis(ticker, profile)
 
     fundamental_report = st.session_state.get("last_fundamental_report")
@@ -568,24 +588,26 @@ def run_app() -> None:
     technical_report = st.session_state.get("last_technical_report")
     final_decision_report = st.session_state.get("last_final_decision_report")
 
-    if not fundamental_report and not deep_check_report and not technical_report and not final_decision_report:
-        return
-
-    st.markdown("---")
+    has_reports = bool(
+        fundamental_report or deep_check_report or technical_report or final_decision_report
+    )
+    if has_reports:
+        st.markdown("---")
     tab_labels: list[str] = []
-    if fundamental_report:
-        tab_labels.append(TAB_STEP1)
-    if deep_check_report:
-        tab_labels.append(TAB_STEP2)
-    if technical_report:
-        tab_labels.append(TAB_STEP3)
-    if final_decision_report:
-        tab_labels.append(TAB_STEP4)
+    if has_reports:
+        if fundamental_report:
+            tab_labels.append(TAB_STEP1)
+        if deep_check_report:
+            tab_labels.append(TAB_STEP2)
+        if technical_report:
+            tab_labels.append(TAB_STEP3)
+        if final_decision_report:
+            tab_labels.append(TAB_STEP4)
 
-    tabs = st.tabs(tab_labels)
-    tab_index = 0
+        tabs = st.tabs(tab_labels)
+        tab_index = 0
 
-    if fundamental_report:
+    if has_reports and fundamental_report:
         with tabs[tab_index]:
             _render_fundamental_summary(fundamental_report)
             _render_report_content(
@@ -597,7 +619,7 @@ def run_app() -> None:
             )
         tab_index += 1
 
-    if deep_check_report:
+    if has_reports and deep_check_report:
         with tabs[tab_index]:
             _render_deep_check_summary(deep_check_report)
             deep_html = getattr(deep_check_report, "html_report", "") or ""
@@ -610,7 +632,7 @@ def run_app() -> None:
             )
         tab_index += 1
 
-    if technical_report:
+    if has_reports and technical_report:
         with tabs[tab_index]:
             _render_technical_summary(technical_report)
             _render_report_content(
@@ -623,7 +645,7 @@ def run_app() -> None:
             )
         tab_index += 1
 
-    if final_decision_report:
+    if has_reports and final_decision_report:
         with tabs[tab_index]:
             _render_final_decision_summary(final_decision_report)
             _render_report_content(
@@ -634,6 +656,8 @@ def run_app() -> None:
                 view_key="final_decision_view_mode",
                 markdown_only=True,
             )
+
+    _render_footer()
 
 
 if __name__ == "__main__":
