@@ -19,7 +19,7 @@ Given a stock ticker and the user’s personal investment profile (capital, risk
 - Personal risk profile matching in the final recommendation
 - Fully deployed public demo on Streamlit Community Cloud
 
-![Main UI](images/main-ui.png)
+<image-card alt="Main UI" src="images/main-ui.png" ></image-card>
 
 ---
 
@@ -32,9 +32,9 @@ Given a stock ticker and the user’s personal investment profile (capital, risk
 | **Step 3** | Technical Analysis | RSI, MACD, moving averages, support/resistance, chart patterns, entry strategy |
 | **Step 4** | Final Investment Decision | Cross-report consistency check + personal profile matching → final rating + position sizing + entry/exit plan |
 
-![Fundamental Analysis Example](images/step1_result1.png)
+<image-card alt="Fundamental Analysis Example" src="images/step1_result1.png" ></image-card>
 
-![Deep Check Analysis Example](images/step2_result1.png)
+<image-card alt="Deep Check Analysis Example" src="images/step2_result1.png" ></image-card>
 
 ---
 
@@ -44,7 +44,7 @@ Try it here: [https://ai-stock-multi-agent-75d5nqefengwnuqvy94hpd.streamlit.app]
 
 Recommended test tickers: `NVDA`, `AAPL`, `GOOGL`, `AMD`, `TSM`
 
-![Final Investment Decision Example](images/final_result1.png)
+<image-card alt="Final Investment Decision Example" src="images/final_result1.png" ></image-card>
 
 ---
 
@@ -61,9 +61,11 @@ Recommended test tickers: `NVDA`, `AAPL`, `GOOGL`, `AMD`, `TSM`
 
 ## Project Structure
 
+```text
 ai-stock-multi-agent/
 ├── app.py                      # Entry point for Streamlit Cloud
-├── ui/app.py                   # Main UI + workflow controller
+├── ui/
+│   └── app.py                  # Main UI + workflow controller
 ├── agents/
 │   ├── fundamental_agent.py    # Step 1
 │   ├── deep_check_agent.py     # Step 2
@@ -73,15 +75,15 @@ ai-stock-multi-agent/
 ├── tools/
 │   ├── stock_data.py
 │   └── technical_indicators.py
-├── utils/config.py
+├── utils/
+│   └── config.py
 ├── requirements.txt
 └── Dockerfile
-
+```
 ---
 
 ## Getting Started (Local)
 
-```bash
 git clone https://github.com/OceanMoon1031/ai-stock-multi-agent.git
 cd ai-stock-multi-agent
 
@@ -91,11 +93,15 @@ pip install -r requirements.txt
 echo "XAI_API_KEY=sk-your-key-here" > .env
 
 streamlit run ui/app.py
-Author
+---
+
+## Author
 Chan Hoi-Yuet (Moon)
 BSc Computer Science, Hong Kong Metropolitan University
 
 Interested in AI Engineering, LLM Applications, and Full-stack Development
 Building practical AI agent systems and LLM-powered tools
-License
+
+---
+## License
 This project is for portfolio and educational demonstration purposes.
