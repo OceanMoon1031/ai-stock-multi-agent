@@ -90,7 +90,10 @@ cd ai-stock-multi-agent
 pip install -r requirements.txt
 
 #Create .env file with your Grok API key
+
 echo "XAI_API_KEY=sk-your-key-here" > .env
+
+
 streamlit run ui/app.py
 
 ---
