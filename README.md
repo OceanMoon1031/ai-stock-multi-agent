@@ -19,7 +19,7 @@ Given a stock ticker and the user’s personal investment profile (capital, risk
 - Personal risk profile matching in the final recommendation
 - Fully deployed public demo on Streamlit Community Cloud
 
-<image-card alt="Main UI" src="images/main-ui.png" ></image-card>
+![Main UI](images/main-ui.png)
 
 ---
 
@@ -32,9 +32,9 @@ Given a stock ticker and the user’s personal investment profile (capital, risk
 | **Step 3** | Technical Analysis | RSI, MACD, moving averages, support/resistance, chart patterns, entry strategy |
 | **Step 4** | Final Investment Decision | Cross-report consistency check + personal profile matching → final rating + position sizing + entry/exit plan |
 
-<image-card alt="Fundamental Analysis Example" src="images/step1_result1.png" ></image-card>
+![Fundamental Analysis Example](images/step1_result1.png)
 
-<image-card alt="Deep Check Analysis Example" src="images/step2_result1.png" ></image-card>
+![Deep Check Analysis Example](images/step2_result1.png)
 
 ---
 
@@ -44,7 +44,7 @@ Try it here: [https://ai-stock-multi-agent-75d5nqefengwnuqvy94hpd.streamlit.app]
 
 Recommended test tickers: `NVDA`, `AAPL`, `GOOGL`, `AMD`, `TSM`
 
-<image-card alt="Final Investment Decision Example" src="images/final_result1.png" ></image-card>
+![Final Investment Decision Example](images/final_result1.png)
 
 ---
 
