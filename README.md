@@ -153,6 +153,18 @@ streamlit run ui/app.py
 
 ---
 
+## What I Learned
+
+Building this multi-agent system taught me several important lessons:
+
+- How to design a **multi-agent workflow** by breaking down a complex task into specialized agents with clear responsibilities and structured data flow.
+- The value of using **Pydantic structured outputs** to improve reliability and reduce hallucination from LLMs.
+- Practical experience integrating **Grok-4 API**, including prompt engineering, handling structured responses, and considering API cost and latency.
+- The importance of **modular architecture** and separation of concerns when building maintainable AI applications.
+- End-to-end development experience, from local prototyping to deploying a public demo on Streamlit Community Cloud.
+
+---
+
 ## Author
 Chan Hoi-Yuet (Moon)
 BSc Computer Science, Hong Kong Metropolitan University
