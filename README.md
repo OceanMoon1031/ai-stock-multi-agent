@@ -42,6 +42,31 @@ Each agent uses **Pydantic structured outputs** to ensure consistent, parseable 
 
 ---
 
+## Architecture Diagram
+
+```mermaid
+flowchart TD
+    A[User Input<br/>Ticker + Investment Profile] --> B[Streamlit UI]
+    B --> C[Workflow Orchestrator]
+    
+    C --> D[Step 1: Fundamental Agent]
+    D --> E[Step 2: Deep Check Agent<br/>8-Dimension Analysis]
+    E --> F[Step 3: Technical Agent<br/>RSI, MACD, MA]
+    F --> G[Step 4: Final Decision Agent<br/>Consistency Check + Personal Fit]
+    
+    D & E & F --> H[Grok-4 API]
+    D & E --> I[yfinance + Technical Indicators]
+    
+    G --> J[Structured Output<br/>Pydantic Models]
+    J --> K[Final Recommendation<br/>+ Position Sizing + Entry/Exit Plan]
+    
+    style A fill:#e0f2fe,stroke:#0369a1
+    style K fill:#dcfce7,stroke:#166534
+
+```
+The architecture follows a sequential pipeline design. Each agent receives structured input from the previous agent and produces a structured Pydantic output. This approach reduces hallucination and improves traceability.
+---
+
 ## Features
 
 - Real-time data fetching (yfinance)
@@ -102,6 +127,29 @@ echo "XAI_API_KEY=sk-your-key-here" > .env
 
 
 streamlit run ui/app.py
+
+---
+
+## Known Limitations
+
+- **API Dependency**: The system relies heavily on the Grok-4 API. Performance, response time, and cost are subject to xAI’s rate limits and pricing model.
+- **Data Scope**: Only uses yfinance for real-time price and financial statement data. No integration with news feeds, earnings call transcripts, SEC filings, or alternative data sources.
+- **Technical Analysis**: Currently limited to basic technical indicators (RSI, MACD, SMA). No advanced chart pattern recognition or machine learning-based signal generation.
+- **No Backtesting**: The system does not support historical backtesting of generated recommendations.
+- **Single Stock Focus**: Designed for individual stock analysis only. Portfolio-level analysis, diversification, or optimization is not supported.
+- **Simple Orchestration**: Uses a basic sequential workflow. More advanced agent collaboration patterns (e.g., parallel agents, debate, reflection, or dynamic routing) are not implemented.
+
+---
+
+## Future Improvements
+
+- Integrate additional data sources such as news APIs, earnings transcripts, and SEC filings to enrich analysis depth.
+- Refactor the orchestration layer using **LangGraph** for better state management, error handling, and more complex agent workflows.
+- Add evaluation metrics and automated testing to measure agent output quality and consistency.
+- Support batch analysis and watchlist functionality for multiple stocks.
+- Implement a caching layer (e.g. Redis or local cache) to reduce redundant API calls and improve response speed.
+- Add a paper trading / backtesting module to validate recommendation performance historically.
+- Explore local LLM deployment (e.g. via Ollama) as a cost-effective alternative for certain use cases.
 
 ---
 
