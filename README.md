@@ -1,21 +1,21 @@
-# AI Stock Multi-Agent Analysis
+# AI Stock Multi-Agent Analysis System
 
 **Live Demo:** [https://ai-stock-multi-agent-75d5nqefengwnuqvy94hpd.streamlit.app](https://ai-stock-multi-agent-75d5nqefengwnuqvy94hpd.streamlit.app)
 
-A multi-agent stock analysis system that performs comprehensive fundamental, pre-purchase due diligence, technical, and final investment decision analysis using Grok (xAI) API.
+A production-oriented multi-agent stock analysis system that performs comprehensive fundamental, pre-purchase due diligence, technical, and final investment decision analysis using Grok-4 (xAI).
 
 ---
 
 ## Project Overview
 
-This project implements a **4-step multi-agent workflow** designed to simulate how a professional investment team would evaluate a stock.
+This project implements a **4-step sequential multi-agent workflow** designed to simulate how a professional investment team would evaluate a stock before making a decision.
 
-Given a stock ticker and the user’s personal investment profile (capital, risk tolerance, investment horizon), the system generates structured, actionable investment recommendations.
+Given a stock ticker and the user’s personal investment profile (available capital, risk tolerance, investment horizon), the system produces structured, actionable investment recommendations with position sizing and entry/exit strategies.
 
 ### Key Highlights
-- 4 specialized agents working in sequence (Fundamental → Deep Check → Technical → Final Decision)
-- Structured outputs using Pydantic models for reliable, machine-readable reports
-- Real-time market data integration via yfinance
+- 4 specialized agents working in sequence with clear separation of concerns
+- Structured outputs enforced via Pydantic models (reliable, machine-readable reports)
+- Real-time market data integration via yfinance + technical indicators
 - Personal risk profile matching in the final recommendation
 - Fully deployed public demo on Streamlit Community Cloud
 
@@ -23,38 +23,44 @@ Given a stock ticker and the user’s personal investment profile (capital, risk
 
 ---
 
-## Features
+## How the Multi-Agent Workflow Works
 
-| Step | Agent | Description |
-|------|-------|-------------|
-| **Step 1** | Fundamental Analysis | Financial statements, KPIs, business segments, guidance vs expectations |
-| **Step 2** | Pre-Purchase Deep Check | 8-dimension skeptical analysis (management, moat, macro, sentiment, valuation, black swans, personal fit, etc.) |
-| **Step 3** | Technical Analysis | RSI, MACD, moving averages, support/resistance, chart patterns, entry strategy |
-| **Step 4** | Final Investment Decision | Cross-report consistency check + personal profile matching → final rating + position sizing + entry/exit plan |
+The system is deliberately designed with **modular agents** and **structured data flow**:
+
+| Step | Agent | Responsibility | Key Output |
+|------|-------|----------------|----------|
+| **Step 1** | Fundamental Analysis | Financial statements, KPIs, business segments, guidance vs consensus | Structured financial report + overall view |
+| **Step 2** | Pre-Purchase Deep Check | 8-dimension skeptical analysis (management quality, moat, macro/geopolitics, sentiment, valuation, black swans, personal fit) | Buy/Hold/Avoid rating + position sizing suggestion |
+| **Step 3** | Technical Analysis | RSI, MACD, moving averages, support/resistance, chart patterns | Entry strategy + stop-loss / take-profit levels |
+| **Step 4** | Final Investment Decision | Cross-report consistency check + personal profile matching | Final rating, recommended position size, entry/exit plan |
+
+Each agent uses **Pydantic structured outputs** to ensure consistent, parseable results instead of free-text responses. This design improves reliability and makes future integration (e.g. into trading bots or dashboards) much easier.
 
 ![Fundamental Analysis Example](images/step1_result1.png)
-
 ![Deep Check Analysis Example](images/step2_result1.png)
+![Final Investment Decision Example](images/final_result1.png)
 
 ---
 
-## Live Demo
+## Features
 
-Try it here: [https://ai-stock-multi-agent-75d5nqefengwnuqvy94hpd.streamlit.app](https://ai-stock-multi-agent-75d5nqefengwnuqvy94hpd.streamlit.app)
-
-Recommended test tickers: `NVDA`, `AAPL`, `GOOGL`, `AMD`, `TSM`
-
-![Final Investment Decision Example](images/final_result1.png)
+- Real-time data fetching (yfinance)
+- Technical indicators calculation (RSI, MACD, SMA)
+- Personal investment profile input (capital, risk tolerance, horizon)
+- Multi-step reasoning with consistency checking
+- Professional dark-theme Streamlit interface
+- Markdown + HTML report export
+- Publicly deployed demo
 
 ---
 
 ## Tech Stack
 
 - **LLM**: Grok-4 (xAI) via OpenAI-compatible API
-- **Orchestration**: Custom multi-agent workflow (Streamlit)
-- **Data**: yfinance + pandas + ta (technical indicators)
+- **Data & Indicators**: yfinance, pandas, ta
 - **Structured Output**: Pydantic v2
 - **Frontend**: Streamlit (dark theme)
+- **Orchestration**: Custom sequential multi-agent workflow
 - **Deployment**: Streamlit Community Cloud
 
 ---
@@ -63,22 +69,23 @@ Recommended test tickers: `NVDA`, `AAPL`, `GOOGL`, `AMD`, `TSM`
 
 ```text
 ai-stock-multi-agent/
-├── app.py                      # Entry point for Streamlit Cloud
+├── app.py                      # Entry point for Streamlit Cloud deployment
 ├── ui/
-│   └── app.py                  # Main UI + workflow controller
+│   └── app.py                  # Main UI + workflow orchestration
 ├── agents/
-│   ├── fundamental_agent.py    # Step 1
-│   ├── deep_check_agent.py     # Step 2
-│   ├── technical_agent.py      # Step 3
-│   ├── final_decision_agent.py # Step 4
-│   └── models.py
+│   ├── fundamental_agent.py    # Step 1: Fundamental Analysis
+│   ├── deep_check_agent.py     # Step 2: Pre-Purchase Deep Check (8 dimensions)
+│   ├── technical_agent.py      # Step 3: Technical Analysis
+│   ├── final_decision_agent.py # Step 4: Final Investment Decision
+│   └── models.py               # Pydantic models for all agents
 ├── tools/
 │   ├── stock_data.py
 │   └── technical_indicators.py
 ├── utils/
-│   └── config.py
+│   └── config.py               # API key & client configuration
 ├── requirements.txt
-└── Dockerfile
+├── Dockerfile
+└── .env.example
 ```
 ---
 
@@ -103,8 +110,14 @@ Chan Hoi-Yuet (Moon)
 BSc Computer Science, Hong Kong Metropolitan University
 
 - **Interested in AI Engineering, LLM Applications, and Full-stack Development**:
-- **Building practical AI agent systems and LLM-powered tools**:
+- **Building production-oriented AI tools with focus on structured outputs, workflow design, and real-world usability**:
+
+Links
+
+- **GitHub: https://github.com/OceanMoon1031**:
+- **Live Demo: https://ai-stock-multi-agent-75d5nqefengwnuqvy94hpd.streamlit.app**:
 
 ---
+
 ## License
 This project is for portfolio and educational demonstration purposes.
